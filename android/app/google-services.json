@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "277126759608",
+    "project_id": "startec-a4468",
+    "storage_bucket": "startec-a4468.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277126759608:android:b76d9c32b7fa35963a204d",
+        "android_client_info": {
+          "package_name": "com.example.startec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277126759608-sm6e79ajjlaf8qkl1q7u337m41kmi1fj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.startec",
+            "certificate_hash": "c49fe93c000bf2e21f4b25f8629e1bd39ecaf7f4"
+          }
+        },
+        {
+          "client_id": "277126759608-6pj4kio6u1k4m1p4t9btlcri3ecu6lgn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcgR04QTNlls0kv3x6iD2sZRnyYyhkzrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277126759608-6pj4kio6u1k4m1p4t9btlcri3ecu6lgn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "277126759608-hte5rfh95ld46g692udjspa6h9c608l4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.startec"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
