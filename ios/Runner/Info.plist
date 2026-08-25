@@ -49,5 +49,8 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Necesitamos acceso a tu cámara para verificar tu identidad</string>
 
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Necesitamos acceso a tus fotos para tu foto de perfil</string>
+
 </dict>
 </plist>

@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/main_scaffold.dart';
+import '../services/app_state.dart';
+
+// ============================================================
+// PALETA COMPARTIDA (misma convención que el resto de la app)
+// ============================================================
+class _C {
+  static const purple = Color.fromARGB(255, 185, 109, 255);
+}
 
 class PaymentsScreen extends StatelessWidget {
   const PaymentsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final matriculaPagada = state.paso4PagoMatricula;
+
     return MainScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -13,18 +25,32 @@ class PaymentsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 8),
 
-              const Center(
-                child: Icon(
-                  Icons.credit_card,
-                  size: 80,
-                  color: Color.fromARGB(255, 185, 109, 255),
+              // ── Flecha de regreso (mismo estilo que el resto de la app) ──
+              Builder(
+                builder: (context) => InkWell(
+                  onTap: () {
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.black87,
+                      size: 18,
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(height: 16),
 
+              // ── Header (ícono + título centrados) ─────────────────────────
+              const Center(
+                child: Icon(Icons.credit_card, size: 80, color: _C.purple),
+              ),
               const SizedBox(height: 12),
-
               const Center(
                 child: Text(
                   'Mis Pagos',
@@ -35,39 +61,44 @@ class PaymentsScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // ── Estado de deuda ──────────────────────────────
-              _seccion('Estado de deuda'),
+              _seccion('Estado de matrícula'),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(30, 185, 109, 255),
+                  color: _C.purple.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 185, 109, 255),
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: _C.purple, width: 1.5),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _deudaFila('Monto mensual', 'S/ 1,352.00'),
+                    _deudaFila(
+                      'Matrícula',
+                      matriculaPagada ? 'Pagada' : 'Pendiente',
+                      color: matriculaPagada ? Colors.green : Colors.redAccent,
+                    ),
                     const SizedBox(height: 8),
-                    _deudaFila('Pagado', 'S/ 1,352.00', color: Colors.green),
-                    const SizedBox(height: 8),
-                    _deudaFila('Pendiente', 'S/ 0.00', color: Colors.redAccent),
+                    _deudaFila('Periodo', '2026 - II (Regular)'),
                     const Divider(height: 20),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
+                        Icon(
+                          matriculaPagada
+                              ? Icons.check_circle
+                              : Icons.error_outline,
+                          color: matriculaPagada ? Colors.green : Colors.orange,
                           size: 18,
                         ),
                         const SizedBox(width: 6),
-                        const Text(
-                          'Al día',
+                        Text(
+                          matriculaPagada
+                              ? 'Al día'
+                              : 'Completa tu pago de matrícula',
                           style: TextStyle(
-                            color: Colors.green,
+                            color: matriculaPagada
+                                ? Colors.green
+                                : Colors.orange.shade800,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -80,12 +111,18 @@ class PaymentsScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // ── Cursos pagados ───────────────────────────────
-              _seccion('Mis cursos pagados'),
-              _cursoPagado('Ciencias Básicas Aplicadas', 'S/ 338.00'),
-              _cursoPagado('Diseño de Interfaces de Programación', 'S/ 338.00'),
-              _cursoPagado('Fundamentos de Programación', 'S/ 338.00'),
-              _cursoPagado('Cálculo y Estadística', 'S/ 338.00'),
+              // ── Cursos matriculados ──────────────────────────
+              _seccion('Mis cursos'),
+              if (matriculaPagada)
+                _infoVacia(
+                  Icons.menu_book_outlined,
+                  'Tus cursos aparecerán aquí una vez inicie el ciclo académico.',
+                )
+              else
+                _infoVacia(
+                  Icons.lock_outline,
+                  'Completa el pago de tu matrícula para ver tus cursos asignados.',
+                ),
 
               const SizedBox(height: 24),
 
@@ -111,15 +148,13 @@ class PaymentsScreen extends StatelessWidget {
 
               // ── Historial de pagos ───────────────────────────
               _seccion('Historial de pagos'),
-              _historialItem('Enero 2025', 'S/ 1,352.00', 'Pagado'),
-              _historialItem('Febrero 2025', 'S/ 1,352.00', 'Pagado'),
-              _historialItem('Marzo 2025', 'S/ 1,352.00', 'Pagado'),
-              _historialItem(
-                'Abril 2025',
-                'S/ 1,352.00',
-                'Pendiente',
-                pendiente: true,
-              ),
+              if (matriculaPagada)
+                _historialItem('Matrícula 2026-II', 'Pagado', pendiente: false)
+              else
+                _infoVacia(
+                  Icons.receipt_long_outlined,
+                  'Aún no tienes pagos registrados.',
+                ),
 
               const SizedBox(height: 32),
             ],
@@ -136,7 +171,7 @@ class PaymentsScreen extends StatelessWidget {
       style: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
-        color: Color.fromARGB(255, 185, 109, 255),
+        color: _C.purple,
       ),
     ),
   );
@@ -156,35 +191,23 @@ class PaymentsScreen extends StatelessWidget {
     ],
   );
 
-  Widget _cursoPagado(String nombre, String precio) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
+  Widget _infoVacia(IconData icon, String mensaje) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(16),
+    margin: const EdgeInsets.only(bottom: 8),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade50,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey.shade200),
+    ),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        Icon(icon, color: Colors.grey.shade500, size: 22),
+        const SizedBox(width: 10),
         Expanded(
-          child: Row(
-            children: [
-              const Icon(
-                Icons.check_circle_outline,
-                color: Color.fromARGB(255, 185, 109, 255),
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  nombre,
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          precio,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Color.fromARGB(255, 185, 109, 255),
-            fontWeight: FontWeight.w600,
+          child: Text(
+            mensaje,
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
           ),
         ),
       ],
@@ -198,14 +221,10 @@ class PaymentsScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(30, 185, 109, 255),
+            color: _C.purple.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: const Color.fromARGB(255, 185, 109, 255),
-            size: 24,
-          ),
+          child: Icon(icon, color: _C.purple, size: 24),
         ),
         const SizedBox(width: 12),
         Column(
@@ -226,8 +245,7 @@ class PaymentsScreen extends StatelessWidget {
   );
 
   Widget _historialItem(
-    String mes,
-    String monto,
+    String concepto,
     String estado, {
     bool pendiente = false,
   }) => Padding(
@@ -236,8 +254,8 @@ class PaymentsScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: pendiente
-            ? const Color.fromARGB(20, 255, 80, 80)
-            : const Color.fromARGB(20, 80, 200, 120),
+            ? Colors.redAccent.withValues(alpha: 0.08)
+            : Colors.green.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: pendiente ? Colors.redAccent : Colors.green,
@@ -247,13 +265,11 @@ class PaymentsScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            mes,
-            style: const TextStyle(fontSize: 14, color: Colors.black87),
-          ),
-          Text(
-            monto,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          Expanded(
+            child: Text(
+              concepto,
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

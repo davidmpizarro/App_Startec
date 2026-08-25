@@ -42,14 +42,22 @@ class _CareerScreenState extends State<CareerScreen> {
 
               const SizedBox(height: 8),
 
-              const Center(
-                child: Text(
-                  'Diseño y Desarrollo de Software',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 185, 109, 255),
-                    fontWeight: FontWeight.w600,
-                  ),
+              Center(
+                child: Builder(
+                  builder: (context) {
+                    final carrera = context.watch<AppState>().carreraUsuario;
+                    return Text(
+                      carrera.isNotEmpty
+                          ? carrera
+                          : 'Diseño y Desarrollo de Software',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 185, 109, 255),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
               ),
 
@@ -76,7 +84,7 @@ class _CareerScreenState extends State<CareerScreen> {
               Center(
                 child: GestureDetector(
                   onTap: () async {
-                    await context.read<AppState>().completarPaso5();
+                    await context.read<AppState>().completarPaso7Carrera();
                     if (!mounted) return;
                     Navigator.push(
                       context,

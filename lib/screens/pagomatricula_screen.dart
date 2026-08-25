@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
-import 'payment_confirmed_screen.dart';
 import '../widgets/main_scaffold.dart';
 import 'package:provider/provider.dart';
 import '../services/app_state.dart';
+import 'pasarela_pagos_screen.dart';
 
-class CoursesScreen extends StatefulWidget {
-  const CoursesScreen({super.key});
+class PagoMatriculaScreen extends StatefulWidget {
+  const PagoMatriculaScreen({super.key});
 
   @override
-  State<CoursesScreen> createState() => _CoursesScreenState();
+  State<PagoMatriculaScreen> createState() => _PagoMatriculaScreenState();
 }
 
-class _CoursesScreenState extends State<CoursesScreen> {
-  final List<Map<String, dynamic>> _cursos = [
-    {'nombre': 'Ciencias Básicas Aplicadas', 'selected': true, 'precio': 338.0},
+class _PagoMatriculaScreenState extends State<PagoMatriculaScreen> {
+  final List<Map<String, dynamic>> _conceptos = [
+    {'nombre': 'Matrícula', 'selected': true, 'precio': 550.0},
     {
-      'nombre': 'Diseño de Interfaces de Programación',
+      'nombre': '1° cuota del semestre',
       'selected': true,
-      'precio': 338.0,
+      'precio': 550.0,
     },
-    {
-      'nombre': 'Fundamentos de Programación',
-      'selected': true,
-      'precio': 338.0,
-    },
-    {'nombre': 'Cálculo y Estadística', 'selected': true, 'precio': 338.0},
   ];
 
-  double get _total => _cursos
+  double get _total => _conceptos
       .where((c) => c['selected'] == true)
-      .fold(0, (sum, c) => sum + c['precio']);
+      .fold(0.0, (sum, c) => sum + (c['precio'] as double));
 
-  bool get _hayAlgunSeleccionado => _cursos.any((c) => c['selected'] == true);
+  bool get _hayAlgunSeleccionado => _conceptos.any((c) => c['selected'] == true);
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +51,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
               const SizedBox(height: 20),
 
-              // Lista de cursos
-              ..._cursos.asMap().entries.map((entry) {
+              // Conceptos a pagar (Matrícula y 1° cuota del semestre)
+              ..._conceptos.asMap().entries.map((entry) {
                 final i = entry.key;
-                final curso = entry.value;
+                final concepto = entry.value;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
@@ -68,14 +62,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          curso['nombre'],
+                          concepto['nombre'],
                           style: const TextStyle(fontSize: 15),
                         ),
                       ),
                       Checkbox(
-                        value: curso['selected'],
+                        value: concepto['selected'],
                         onChanged: (v) =>
-                            setState(() => _cursos[i]['selected'] = v ?? false),
+                            setState(() => _conceptos[i]['selected'] = v ?? false),
                         activeColor: const Color.fromARGB(255, 185, 109, 255),
                         side: const BorderSide(
                           color: Color.fromARGB(255, 185, 109, 255),
@@ -115,7 +109,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
               // Nota informativa
               const Text(
-                'Recuerda que al proceder al pago, confirmas tu selección de cursos y tu compromiso de matrícula.',
+                'Recuerda que al proceder al pago confirmas tu compromiso con la matrícula.',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black87,
@@ -123,12 +117,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 ),
               ),
 
-              // Mensaje de advertencia si no hay cursos seleccionados
+              // Mensaje de advertencia si no hay conceptos seleccionados
               if (!_hayAlgunSeleccionado)
                 const Padding(
                   padding: EdgeInsets.only(top: 12),
                   child: Text(
-                    'Debes seleccionar al menos un curso para continuar.',
+                    'Debes seleccionar al menos un concepto para continuar.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 13,
@@ -145,12 +139,13 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 child: GestureDetector(
                   onTap: _hayAlgunSeleccionado
                       ? () async {
-                          await context.read<AppState>().completarPaso3();
+                          final appState = context.read<AppState>();
+                          final navigator = Navigator.of(context);
+                          await appState.completarPaso4PagoMatricula();
                           if (!mounted) return;
-                          Navigator.push(
-                            context,
+                          navigator.push(
                             MaterialPageRoute(
-                              builder: (_) => const PaymentConfirmedScreen(),
+                              builder: (_) => const PasarelaPagosScreen(),
                             ),
                           );
                         }
