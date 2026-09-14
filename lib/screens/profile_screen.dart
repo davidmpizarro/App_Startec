@@ -183,10 +183,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return MainScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            16,
+            24,
+            MainScaffold.bottomBarHeight(context) + 24,
+          ),
           child: Column(
             children: [
-              const SizedBox(height: 24),
+              // ── Flecha de regreso ──────────────────────────────────────
+              Align(
+                alignment: Alignment.centerLeft,
+                child: InkWell(
+                  onTap: () {
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color.fromARGB(255, 26, 29, 46),
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 18),
 
               // ✅ Avatar editable (toca para cambiar la foto)
               Center(
@@ -248,8 +272,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildField('Distrito', _distrito),
               _buildField('Provincia', _provincia),
               _buildField('Departamento', _departamento),
-              _buildField('Nombre y Apellidos de la Madre', _nombreMadre),
-              _buildField('Nombre y Apellidos del Padre', _nombrePadre),
+              _buildField('Nombres y Apellidos de la Madre', _nombreMadre),
+              _buildField('Nombres y Apellidos del Padre', _nombrePadre),
               _buildField('Responsable del pago', _responsablePago),
               _buildField(
                 'Correo del Responsable del Pago',

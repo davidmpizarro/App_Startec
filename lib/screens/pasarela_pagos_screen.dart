@@ -65,9 +65,35 @@ class _PasarelaPagosScreenState extends State<PasarelaPagosScreen> {
     return MainScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            16,
+            24,
+            MainScaffold.bottomBarHeight(context) + 24,
+          ),
           child: Column(
             children: [
+              // ── Flecha de regreso ──────────────────────────────────────
+              Align(
+                alignment: Alignment.centerLeft,
+                child: InkWell(
+                  onTap: () {
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Color.fromARGB(255, 26, 29, 46),
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
               const Icon(Icons.credit_card, size: 80, color: _brandPurple),
               const SizedBox(height: 12),
               const Text(
@@ -108,18 +134,23 @@ class _PasarelaPagosScreenState extends State<PasarelaPagosScreen> {
 
               const SizedBox(height: 24),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _isProcesando ? null : _procesarPago,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _brandPurple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 3,
+              GestureDetector(
+                onTap: _isProcesando ? null : _procesarPago,
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _brandPurple,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 132, 57, 231),
+                        offset: Offset(3, 6),
+                        blurRadius: 3,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
                   child: _isProcesando
                       ? const SizedBox(
@@ -135,6 +166,7 @@ class _PasarelaPagosScreenState extends State<PasarelaPagosScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                 ),

@@ -25,20 +25,28 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
+            final isSmallScreen = constraints.maxHeight < 680;
+            final imageHeight = isSmallScreen ? 160.0 : 210.0;
+            final verticalSpacing = isSmallScreen ? 18.0 : 28.0;
+
             return SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: MainScaffold.bottomBarHeight(context) + 20,
+              ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 50),
+                        padding: EdgeInsets.only(top: isSmallScreen ? 20 : 36),
                         child: Image.asset(
                           'assets/images/foto-home.png',
-                          height: 220,
+                          height: imageHeight,
+                          fit: BoxFit.contain,
                         ),
                       ),
-                      const SizedBox(height: 35),
+                      SizedBox(height: verticalSpacing),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: Column(
@@ -46,31 +54,31 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               '¡Hola $nombreCorto!',
-                              style: const TextStyle(
-                                fontSize: 28,
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 24 : 28,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 35),
+                            SizedBox(height: isSmallScreen ? 18 : 24),
                             const Text(
                               'Vive tu proceso de matrícula como una\naventura con STARTEC.',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 14.5,
                                 color: Colors.black,
-                                height: 1.5,
+                                height: 1.45,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
                             const Text(
                               '¡Supera todos los niveles para asegurar una experiencia positiva hasta el inicio de clases!',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 14.5,
                                 color: Colors.black,
-                                height: 1.5,
+                                height: 1.45,
                               ),
                             ),
-                            const SizedBox(height: 30),
+                            SizedBox(height: isSmallScreen ? 24 : 32),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
@@ -83,8 +91,8 @@ class HomeScreen extends StatelessWidget {
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
+                                    horizontal: 28,
+                                    vertical: 13,
                                   ),
                                   decoration: BoxDecoration(
                                     color: const Color.fromARGB(
@@ -94,15 +102,15 @@ class HomeScreen extends StatelessWidget {
                                       255,
                                     ),
                                     borderRadius: BorderRadius.circular(40),
-                                    boxShadow: [
+                                    boxShadow: const [
                                       BoxShadow(
-                                        color: const Color.fromARGB(
+                                        color: Color.fromARGB(
                                           255,
                                           132,
                                           57,
                                           231,
                                         ),
-                                        offset: const Offset(3, 6),
+                                        offset: Offset(3, 6),
                                         blurRadius: 3,
                                         spreadRadius: 1,
                                       ),
@@ -111,7 +119,7 @@ class HomeScreen extends StatelessWidget {
                                   child: const Text(
                                     'Quiero empezar',
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                     ),
@@ -119,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 50),
+                            const SizedBox(height: 24),
                           ],
                         ),
                       ),

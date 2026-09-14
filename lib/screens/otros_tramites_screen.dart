@@ -15,12 +15,6 @@ class _C {
 }
 
 class _Txt {
-  static const title = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w800,
-    color: _C.slateDark,
-    letterSpacing: -0.3,
-  );
   static const subtitle = TextStyle(
     fontSize: 13,
     color: _C.slateMuted,
@@ -119,29 +113,38 @@ class _StatPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, color: Colors.white, size: 22),
-      const SizedBox(width: 8),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 12,
+      Icon(icon, color: Colors.white, size: 20),
+      const SizedBox(width: 6),
+      Flexible(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                ),
+              ),
             ),
-          ),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.85),
-              fontSize: 10,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: 10,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ],
   );
@@ -349,31 +352,49 @@ class _OtrosTramitesScreenState extends State<OtrosTramitesScreen> {
     return MainScaffold(
       backgroundColor: _C.bg,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _header(context),
-              const SizedBox(height: 16),
-              _statsBanner(),
-              const SizedBox(height: 18),
-              Text(
-                'Becas y Créditos Educativos (${_tramites.length})',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: _C.slateDark,
+        child: Column(
+          children: [
+            // ── Header fijo (no hace scroll) ────────────────────────────
+            _buildAppBar(context),
+
+            // ── Contenido con scroll ─────────────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  12,
+                  16,
+                  MainScaffold.bottomBarHeight(context) + 30,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Consulta requisitos y postula a becas o financiamiento educativo de forma 100% digital.',
+                      style: _Txt.subtitle,
+                    ),
+                    const SizedBox(height: 16),
+                    _statsBanner(),
+                    const SizedBox(height: 18),
+                    Text(
+                      'Becas y Créditos Educativos (${_tramites.length})',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: _C.slateDark,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    for (final t in _tramites) _tramiteCard(t),
+                    const SizedBox(height: 24),
+                    _pdfCard(),
+                    const SizedBox(height: 24),
+                    _faqSection(),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              for (final t in _tramites) _tramiteCard(t),
-              const SizedBox(height: 24),
-              _pdfCard(),
-              const SizedBox(height: 24),
-              _faqSection(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -381,42 +402,44 @@ class _OtrosTramitesScreenState extends State<OtrosTramitesScreen> {
 
   // ---------- Secciones ----------
 
-  Widget _header(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(
-        height: 40,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            const Center(child: Text('Otros Trámites', style: _Txt.title)),
-            Positioned(
-              left: 0,
-              child: InkWell(
-                onTap: () {
-                  if (Navigator.canPop(context)) Navigator.pop(context);
-                },
-                borderRadius: BorderRadius.circular(20),
-                child: const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: _C.slateDark,
-                    size: 18,
-                  ),
-                ),
+  Widget _buildAppBar(BuildContext context) {
+    return Container(
+      color: _C.bg,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () {
+              if (Navigator.canPop(context)) Navigator.pop(context);
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: const Padding(
+              padding: EdgeInsets.all(8),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: _C.slateDark,
               ),
             ),
-          ],
-        ),
+          ),
+          const Expanded(
+            child: Text(
+              'Otros Trámites',
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: _C.slateDark,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+          const SizedBox(width: 34),
+        ],
       ),
-      const SizedBox(height: 8),
-      const Text(
-        'Consulta requisitos y postula a becas o financiamiento educativo de forma 100% digital.',
-        style: _Txt.subtitle,
-      ),
-    ],
-  );
+    );
+  }
 
   Widget _statsBanner() => Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

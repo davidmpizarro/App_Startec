@@ -134,7 +134,9 @@ class _ChatBotSheetState extends State<ChatBotSheet> {
             padding: EdgeInsets.only(
               left: 16,
               right: 16,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom +
+                  MediaQuery.of(context).padding.bottom +
+                  12,
               top: 8,
             ),
             child: Row(

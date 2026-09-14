@@ -24,13 +24,20 @@ class AppDrawer extends StatelessWidget {
     final String nombreCorto = nombreCompleto.split(' ').first;
 
     return Drawer(
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-            color: const Color.fromARGB(255, 185, 109, 255),
-            child: SafeArea(
+      child: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top + 20,
+                bottom: 24,
+                left: 20,
+                right: 20,
+              ),
+              color: const Color.fromARGB(255, 185, 109, 255),
               child: Text(
                 'Hola, $nombreCorto',
                 style: const TextStyle(
@@ -40,64 +47,83 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          _drawerItem(context, Icons.assignment, 'Estado de Admisión', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const EstadoAdmisionScreen()),
-            );
-          }),
-          _drawerItem(context, Icons.folder, 'Documentos', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const DocumentUploadScreen()),
-            );
-          }),
-          _drawerItem(context, Icons.credit_card, 'Mis Pagos', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PaymentsScreen()),
-            );
-          }),
-          _drawerItem(context, Icons.public, 'Explora Tecsup', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ExploraTecsupScreen()),
-            );
-          }),
-          _drawerItem(context, Icons.list_alt, 'Otros Trámites', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OtrosTramitesScreen()),
-            );
-          }),
-          _drawerItem(context, Icons.schedule, 'Mis Horarios', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const MisHorariosScreen()),
-            );
-          }),
-          const Spacer(),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text(
-              'Cerrar sesión',
-              style: TextStyle(color: Colors.red),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                children: [
+                  _drawerItem(context, Icons.assignment, 'Estado de Admisión', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const EstadoAdmisionScreen(),
+                      ),
+                    );
+                  }),
+                  _drawerItem(context, Icons.folder, 'Documentos', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const DocumentUploadScreen(),
+                      ),
+                    );
+                  }),
+                  _drawerItem(context, Icons.credit_card, 'Mis Pagos', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PaymentsScreen()),
+                    );
+                  }),
+                  _drawerItem(context, Icons.public, 'Explora Tecsup', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ExploraTecsupScreen(),
+                      ),
+                    );
+                  }),
+                  _drawerItem(context, Icons.list_alt, 'Otros Trámites', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const OtrosTramitesScreen(),
+                      ),
+                    );
+                  }),
+                  _drawerItem(context, Icons.schedule, 'Mis Horarios', () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MisHorariosScreen(),
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
-            onTap: () async {
-              await FirebaseAuth.instance.signOut();
-              await GoogleSignIn().signOut();
-              if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-        ],
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text(
+                'Cerrar sesión',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                await GoogleSignIn().signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

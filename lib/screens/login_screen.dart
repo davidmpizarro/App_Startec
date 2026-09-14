@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +6,6 @@ import 'facial_screen.dart';
 import 'home_screen.dart';
 import '../services/dni_auth_service.dart';
 import '../services/app_state.dart';
-import '../services/biometric_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -192,7 +189,24 @@ class _LoginScreenState extends State<LoginScreen> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      if (!mounted) return;
+
+      final appState = context.read<AppState>();
+      final nombreGoogle =
+          googleUser.displayName ?? userCredential.user?.displayName ?? '';
+
+      await appState.setUsuarioAdmitido(
+        nombre: nombreGoogle,
+        documento: appState.documentoUsuario,
+        carrera: appState.carreraUsuario.isNotEmpty
+            ? appState.carreraUsuario
+            : null,
+      );
+
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -295,44 +309,50 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFB96DFF),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              // Logo STARTEC y subtítulo
-              Center(
-                child: Image.asset(
-                  'assets/images/STARTEC-LOGO.png',
-                  height: 90,
-                ),
-              ),
-              const Center(
-                child: Text(
-                  'Inicia tu futuro aquí',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isSmall = constraints.maxHeight < 680;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: isSmall ? 8 : 16),
+                  // Logo STARTEC y subtítulo
+                  Center(
+                    child: Image.asset(
+                      'assets/images/STARTEC-LOGO.png',
+                      height: isSmall ? 70 : 85,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 28),
-              // Título "Inicio de sesión"
-              const Text(
-                'Inicio de sesión',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      'Inicia tu futuro aquí',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: isSmall ? 18 : 26),
+                  // Título "Inicio de sesión"
+                  const Text(
+                    'Inicio de sesión',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: isSmall ? 14 : 18),
               // Campo Usuario (DNI)
               _buildUsuarioField(),
               const SizedBox(height: 14),
@@ -507,46 +527,51 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
-              // Ilustración
-              Center(
-                child: Image.asset(
-                  'assets/images/foto-login-startec.png',
-                  height: 170,
-                  fit: BoxFit.contain,
+                SizedBox(height: isSmall ? 16 : 24),
+                // Ilustración
+                Center(
+                  child: Image.asset(
+                    'assets/images/foto-login-startec.png',
+                    height: isSmall ? 130 : 160,
+                    fit: BoxFit.contain,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              // Footer: ¿No tienes acceso? Contacta a tu asesor.
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '¿No tienes acceso? ',
-                      style: TextStyle(color: Colors.black87, fontSize: 14),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: _showAsesorContactDialog,
-                      child: const Text(
-                        'Contacta a tu asesor.',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                SizedBox(height: isSmall ? 14 : 20),
+                // Footer: ¿No tienes acceso? Contacta a tu asesor.
+                Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          '¿No tienes acceso? ',
+                          style: TextStyle(color: Colors.black87, fontSize: 14),
                         ),
-                      ),
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: _showAsesorContactDialog,
+                          child: const Text(
+                            'Contacta a tu asesor.',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
+                const SizedBox(height: 24),
+              ],
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 }

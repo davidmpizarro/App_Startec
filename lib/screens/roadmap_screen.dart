@@ -121,7 +121,7 @@ class RoadmapScreen extends StatelessWidget {
                         labelOnTop: true,
                       ),
                       _StepData(
-                        label: 'Actualiza tu perfil',
+                        label: 'Actualiza\ntu perfil',
                         completed: state.paso2Perfil,
                         available: true,
                         destino: const ProfileScreen(),

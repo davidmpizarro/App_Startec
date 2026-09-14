@@ -15,6 +15,20 @@ class MainScaffold extends StatelessWidget {
     this.backgroundColor = Colors.white,
   });
 
+  static const double _barBaseHeight = 60;
+
+  // 👈 NUEVO: helper para que cualquier screen sepa cuánto padding
+  // inferior necesita su ScrollView para no quedar tapado por la barra.
+  // Úsalo así en tus screens (ej. DocumentUploadScreen):
+  //
+  // padding: EdgeInsets.only(
+  //   left: 20, right: 20, top: 16,
+  //   bottom: MainScaffold.bottomBarHeight(context) + 20,
+  // ),
+  static double bottomBarHeight(BuildContext context) {
+    return _barBaseHeight + MediaQuery.of(context).padding.bottom;
+  }
+
   void _abrirChatBot(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -26,21 +40,24 @@ class MainScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 👈 ya no hay "final scaffoldKey = GlobalKey<ScaffoldState>();" aquí
-
     return Scaffold(
-      // 👈 ya no hay "key: scaffoldKey" aquí
       backgroundColor: backgroundColor,
-      drawer:
-          const AppDrawer(), // 👈 en vez de todo el Drawer(child: Column(...)) escrito a mano
+      drawer: const AppDrawer(),
       body: body,
       bottomNavigationBar: Container(
-        height: 60,
+        // 👈 único cambio real vs tu original: sumamos el safe area
+        // inferior del sistema (gesture bar) para que la franja púrpura
+        // no quede pegada/comida por el indicador de home en celulares
+        // con navegación por gestos.
+        height: _barBaseHeight + MediaQuery.of(context).padding.bottom,
         color: const Color.fromARGB(255, 185, 109, 255),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Positioned.fill(
+              bottom: MediaQuery.of(
+                context,
+              ).padding.bottom, // 👈 deja los íconos en los 60px de arriba
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -79,7 +96,6 @@ class MainScaffold extends StatelessWidget {
                     ),
                   ),
                   Builder(
-                    // 👈 en vez de "onTap: () => scaffoldKey.currentState?.openDrawer()"
                     builder: (context) => GestureDetector(
                       onTap: () => Scaffold.of(context).openDrawer(),
                       child: const Icon(
@@ -92,6 +108,7 @@ class MainScaffold extends StatelessWidget {
                 ],
               ),
             ),
+            // 👈 exactamente tu posicionamiento original del bot, sin tocar
             Positioned(
               top: -28,
               left: 65,

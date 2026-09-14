@@ -291,447 +291,480 @@ class _DocumentUploadScreenState extends State<DocumentUploadScreen> {
 
     return MainScaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Header Institucional (unificado con el resto de la app) ──
-              Row(
+        child: Column(
+          children: [
+            // ── Header fijo con fondo sólido (no se transparenta al scrollear) ──
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
                 children: [
                   InkWell(
                     onTap: () {
                       if (Navigator.canPop(context)) Navigator.pop(context);
                     },
                     borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      child: const Icon(
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(
                         Icons.arrow_back_ios_new_rounded,
+                        size: 16,
                         color: _darkBlue,
-                        size: 18,
                       ),
                     ),
                   ),
                   const Expanded(
                     child: Text(
                       'Documentos',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: _darkBlue,
-                        letterSpacing: -0.3,
-                      ),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: _darkBlue,
+                        letterSpacing: -0.2,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 34),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 18),
-
-              // ── Banner de Estado ─────────────────────────────────────────
-              if (yaEntregado)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: Colors.green.shade300,
-                      width: 1.2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.green.withValues(alpha: 0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade600,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Documentos Registrados',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF14532D),
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              'Tus certificados han sido cargados con éxito. Puedes actualizarlos si es necesario.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF166534),
-                                height: 1.3,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+            // ── Contenido con scroll ─────────────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  16,
+                  20,
+                  MainScaffold.bottomBarHeight(context) + 30,
                 ),
-
-              const SizedBox(height: 8),
-
-              // ── Título Sección de Carga ──────────────────────────────────
-              const Text(
-                'Subir Certificados de Estudios',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: _darkBlue,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Selecciona tus certificados oficiales o constancia de logros (PDF, imágenes o Word).',
-                style: TextStyle(fontSize: 12.5, color: Colors.black54),
-              ),
-
-              const SizedBox(height: 14),
-
-              // ── Zona de Carga Interactiva (Dropzone) ──────────────────────
-              GestureDetector(
-                onTap: _seleccionarArchivos,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 28,
-                    horizontal: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        _brandPurple.withValues(alpha: 0.08),
-                        _darkPurple.withValues(alpha: 0.04),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: _brandPurple.withValues(alpha: 0.5),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _brandPurple.withValues(alpha: 0.08),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Banner de Estado ─────────────────────────────────
+                    if (yaEntregado)
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFF0FDF4), Color(0xFFDCFCE7)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.green.shade300,
+                            width: 1.2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: _brandPurple.withValues(alpha: 0.2),
-                              blurRadius: 8,
+                              color: Colors.green.withValues(alpha: 0.08),
+                              blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.cloud_upload_rounded,
-                          color: _darkPurple,
-                          size: 38,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Toca para seleccionar archivos',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: _darkPurple,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'PDF, JPG, PNG, DOCX • Máx. 10 MB por archivo',
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ── Lista de Archivos Seleccionados ───────────────────────────
-              if (_archivos.isNotEmpty) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Archivos seleccionados (${_archivos.length})',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: _darkBlue,
-                      ),
-                    ),
-                    TextButton.icon(
-                      onPressed: _seleccionarArchivos,
-                      icon: const Icon(Icons.add_rounded, size: 18),
-                      label: const Text('Agregar más'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: _darkPurple,
-                        padding: EdgeInsets.zero,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ..._archivos.asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final file = entry.value;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade200),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Stack(
-                          clipBehavior: Clip.none,
+                        child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: _brandPurple.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.green.shade600,
+                                shape: BoxShape.circle,
                               ),
-                              child: Icon(
-                                _iconoParaArchivo(file.extension),
-                                color: _darkPurple,
-                                size: 24,
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 20,
                               ),
                             ),
-                            Positioned(
-                              right: -4,
-                              bottom: -4,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green.shade600,
-                                  size: 16,
-                                ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Documentos Registrados',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF14532D),
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    'Tus certificados han sido cargados con éxito. Puedes actualizarlos si es necesario.',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF166534),
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+
+                    const SizedBox(height: 8),
+
+                    // ── Título Sección de Carga ──────────────────────────────────
+                    const Text(
+                      'Subir Certificados de Estudios',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: _darkBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Selecciona tus certificados oficiales o constancia de logros (PDF, imágenes o Word).',
+                      style: TextStyle(fontSize: 12.5, color: Colors.black54),
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    // ── Zona de Carga Interactiva (Dropzone) ──────────────────────
+                    GestureDetector(
+                      onTap: _seleccionarArchivos,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 28,
+                          horizontal: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              _brandPurple.withValues(alpha: 0.08),
+                              _darkPurple.withValues(alpha: 0.04),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: _brandPurple.withValues(alpha: 0.5),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _brandPurple.withValues(alpha: 0.08),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: _brandPurple.withValues(alpha: 0.2),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.cloud_upload_rounded,
+                                color: _darkPurple,
+                                size: 38,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Toca para seleccionar archivos',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: _darkPurple,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'PDF, JPG, PNG, DOCX • Máx. 10 MB por archivo',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ── Lista de Archivos Seleccionados ───────────────────────────
+                    if (_archivos.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Archivos seleccionados (${_archivos.length})',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: _darkBlue,
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: _seleccionarArchivos,
+                            icon: const Icon(Icons.add_rounded, size: 18),
+                            label: const Text('Agregar más'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: _darkPurple,
+                              padding: EdgeInsets.zero,
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ..._archivos.asMap().entries.map((entry) {
+                        final i = entry.key;
+                        final file = entry.value;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade200),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
                             children: [
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: _brandPurple.withValues(
+                                        alpha: 0.12,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      _iconoParaArchivo(file.extension),
+                                      color: _darkPurple,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: -4,
+                                    bottom: -4,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green.shade600,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      file.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: _darkBlue,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${_formatoTamano(file.size)} • Subido correctamente',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        color: Colors.green.shade700,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                  size: 20,
+                                  color: Colors.redAccent,
+                                ),
+                                onPressed: () => _eliminarArchivo(i),
+                                tooltip: 'Eliminar archivo',
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 12),
+                    ],
+
+                    // ── Botón Principal de Continuación ──────────────────────────
+                    GestureDetector(
+                      onTap: _isSaving
+                          ? null
+                          : () => _guardarYContinuar(yaEntregado),
+                      child: Container(
+                        width: double.infinity,
+                        height: 52,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: _brandPurple,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 132, 57, 231),
+                              offset: Offset(3, 6),
+                              blurRadius: 3,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: _isSaving
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  yaEntregado
+                                      ? 'ACTUALIZAR Y CONTINUAR'
+                                      : 'GUARDAR Y CONTINUAR',
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.3,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    if (yaEntregado) ...[
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 46,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _mostrarConstancia(context, state),
+                          icon: const Icon(
+                            Icons.receipt_long_rounded,
+                            color: _darkPurple,
+                            size: 20,
+                          ),
+                          label: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Ver Constancia de Recepción',
+                              style: TextStyle(
+                                color: _darkPurple,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                              color: _brandPurple,
+                              width: 1.3,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // ── Mesa de Ayuda Institucional ──────────────────────────────
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.help_outline_rounded,
+                                color: Colors.black54,
+                                size: 18,
+                              ),
+                              SizedBox(width: 8),
                               Text(
-                                file.name,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                'Mesa de Ayuda de Admisión Tecsup',
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   color: _darkBlue,
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                '${_formatoTamano(file.size)} • Subido correctamente',
-                                style: TextStyle(
-                                  fontSize: 11.5,
-                                  color: Colors.green.shade700,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
                             ],
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.close_rounded,
-                            size: 20,
-                            color: Colors.redAccent,
+                          SizedBox(height: 6),
+                          Text(
+                            '• La revisión oficial de documentos toma entre 24 a 48 horas hábiles.\n'
+                            '• Correo: admision@tecsup.edu.pe | Teléfono: (01) 317-3900',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black87,
+                              height: 1.4,
+                            ),
                           ),
-                          onPressed: () => _eliminarArchivo(i),
-                          tooltip: 'Eliminar archivo',
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-                const SizedBox(height: 12),
-              ],
-
-              // ── Botón Principal de Continuación ──────────────────────────
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isSaving
-                      ? null
-                      : () => _guardarYContinuar(yaEntregado),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _brandPurple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 3,
-                    shadowColor: _darkPurple.withValues(alpha: 0.4),
-                  ),
-                  child: _isSaving
-                      ? const SizedBox(
-                          height: 22,
-                          width: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(
-                          yaEntregado
-                              ? 'ACTUALIZAR Y CONTINUAR'
-                              : 'GUARDAR Y CONTINUAR',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                ),
-              ),
-
-              if (yaEntregado) ...[
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  height: 46,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _mostrarConstancia(context, state),
-                    icon: const Icon(
-                      Icons.receipt_long_rounded,
-                      color: _darkPurple,
-                      size: 20,
-                    ),
-                    label: const Text(
-                      'Ver Constancia de Recepción',
-                      style: TextStyle(
-                        color: _darkPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        ],
                       ),
                     ),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: _brandPurple, width: 1.3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
 
-              const SizedBox(height: 24),
-
-              // ── Mesa de Ayuda Institucional ──────────────────────────────
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.grey.shade200),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.help_outline_rounded,
-                          color: Colors.black54,
-                          size: 18,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Mesa de Ayuda de Admisión Tecsup',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: _darkBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6),
-                    Text(
-                      '• La revisión oficial de documentos toma entre 24 a 48 horas hábiles.\n'
-                      '• Correo: admision@tecsup.edu.pe | Teléfono: (01) 317-3900',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black87,
-                        height: 1.4,
-                      ),
-                    ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 30),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

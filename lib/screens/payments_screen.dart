@@ -21,7 +21,12 @@ class PaymentsScreen extends StatelessWidget {
     return MainScaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.fromLTRB(
+            24,
+            8,
+            24,
+            MainScaffold.bottomBarHeight(context) + 24,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
